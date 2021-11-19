@@ -20,9 +20,9 @@ const request = async (api, secret, endpoint, path) => {
     let signature = crypto.createHmac('sha256', secret).update(dataAndNonce).digest('hex');
     message = dataAndNonce + '&signature=' + signature ;
     options.headers['X-MBX-APIKEY'] = api;
-    const makeRequest = await fetch(`${endpoint}${path}?${message}`, options)
+    const makeRequest = await fetch(`${endpoint}${path}?type=SPOT&${message}`, options)
                 .then(response => response.json())
                 .then(json => console.log(json))
 }
 
-request(api, secret, endpoint, path) // TODO: why output is - { code: -1022, msg: 'Signature for this request is not valid.' }
+request(api, secret, endpoint, path) // TODO: why output is - { code: -1022, msg: 'Signature for this request is not valid.' } добавить параметры запроса в сигнатуру
