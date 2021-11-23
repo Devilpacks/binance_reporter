@@ -15,7 +15,7 @@ const parameters = 'type=SPOT'
 
 const balance = async () => {
     const bncSnap = await bnc(apiKey, secretKey, endpoint, path, parameters)
-    console.log(bncSnap);
+    console.log(...bncSnap);
 }
 
 balance()
