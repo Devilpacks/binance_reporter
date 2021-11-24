@@ -10,7 +10,6 @@ const checkResponseStatus = (res) => {
     }
 }
 
-
 const getRequest = async (apiKey, secretKey, endpoint, path, parameters) => {
     const options = {headers: {}};
     let nonce = Date.now().toString();

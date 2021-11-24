@@ -2,9 +2,6 @@ const dotenv = require('dotenv');
 const bnc = require('./getRequest')
 const postgres = require('postgres');
 
-
-
-
 dotenv.config();
 
 const apiKey = process.env.APIKEY;
