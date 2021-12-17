@@ -4,27 +4,32 @@ const postgres = require('postgres');
 const fs = require('fs')
 dotenv.config();
 
-const apiKey = process.env.bncKey;
-const secretKey = process.env.bncSecret
-const endpoint = 'https://fapi.binance.com'
-const path = '/fapi/v1/account'
+const apiKey = process.env.APIKEY;
+const secretKey = process.env.SECRET
+const endpoint = 'https://api.binance.com'
+const path = '/api/v3/account'
 const parameters = ''
 
-const balance = async (apiKey, secretKey, endpoint, path, parameters) => {
+balance = async (apiKey, secretKey, endpoint, path, parameters) => {
     try {
         const bncSnap = await bnc(apiKey, secretKey, endpoint, path, parameters)
+        // console.log(bncSnap.balances[0]);
         fs.writeFileSync("bncSnap.json", JSON.stringify(bncSnap))
-        var jsonBncAccount = JSON.stringify(bncSnap);
-        var balance_bnc_usd = parseFloat(bncSnap.totalMarginBalance);
-        let gross_margin = balance_bnc_usd;
-        let used_margin = balance_bnc_usd - bncSnap.maxWithdrawAmount;
-        // let calc_margin = (balance_bnc_usd > 0) ? position_bnc_usd / bncLeverage : 0.0;
-        console.log(gross_margin, used_margin, used_margin/gross_margin, bncSnap.totalInitialMargin, bncSnap.totalMaintMargin, bncSnap.totalPositionInitialMargin, bncSnap.totalOpenOrderInitialMargin);
+        return bncSnap
     } catch (error) {
         console.log(error);
     }
 }
+getAssets = async () => {
+    const getBalance = await balance(apiKey, secretKey, endpoint, path, parameters)
+    for (let index = 0; index < getBalance.balances.length; index++) {
+        if (getBalance.balances[index].free>0 || getBalance.balances[index].locked>0 ) {
+            // const element = getBalance.balances[index];
+            console.log(getBalance.balances[index]);
+        }
+    }
+}
 
-balance(apiKey, secretKey, endpoint, path, parameters)
+getAssets()
 
 
