@@ -22,12 +22,16 @@ balance = async (apiKey, secretKey, endpoint, path, parameters) => {
 }
 getAssets = async () => {
     const getBalance = await balance(apiKey, secretKey, endpoint, path, parameters)
+    const element = {}
     for (let index = 0; index < getBalance.balances.length; index++) {
-        if (getBalance.balances[index].free>0 || getBalance.balances[index].locked>0 ) {
-            // const element = getBalance.balances[index];
-            console.log(getBalance.balances[index]);
+        let line = getBalance.balances[index]
+        if (line.free>0 || line.locked>0 ) {
+            let assetName = line.asset
+            element[assetName] = parseFloat(line.free)+parseFloat(line.locked);
+            console.log(line);
         }
     }
+    console.log(Object.keys(element)[0]);
 }
 
 getAssets()
