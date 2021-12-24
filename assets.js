@@ -6,7 +6,7 @@ dotenv.config();
 
 const apiKey = process.env.APIKEY;
 const secretKey = process.env.SECRET
-const endpoint = 'https://api3.binance.com'
+const endpoint = 'https://api.binance.com'
 const path = '/api/v3/account'
 const parameters = ''
 
