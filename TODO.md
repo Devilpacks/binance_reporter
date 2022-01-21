@@ -24,3 +24,14 @@
 |`coin-m futures`|[GET /dapi/v1/account](https://binance-docs.github.io/apidocs/delivery/en/#account-information-user_data)|[GET /dapi/v1/depth](https://binance-docs.github.io/apidocs/delivery/en/#order-book)|[POST /dapi/v1/order](https://binance-docs.github.io/apidocs/delivery/en/#new-order-trade)|https://dapi.binance.com|
 |`cross margin`|[GET /sapi/v1/margin/account](https://binance-docs.github.io/apidocs/spot/en/#query-cross-margin-account-details-user_data)|[GET /api/v3/depth](https://binance-docs.github.io/apidocs/spot/en/#order-book)|[POST /sapi/v1/margin/order](https://binance-docs.github.io/apidocs/spot/en/#margin-account-new-order-trade)|https://api.binance.com|
 |`isolated margin`|[GET /sapi/v1/margin/isolated/account](https://binance-docs.github.io/apidocs/spot/en/#query-isolated-margin-account-info-user_data)|[GET /api/v3/depth](https://binance-docs.github.io/apidocs/spot/en/#order-book)|[POST /sapi/v1/margin/order](https://binance-docs.github.io/apidocs/spot/en/#margin-account-new-order-trade)|https://api.binance.com|
+
+
+# Схема работы
+1. Отправляем запрос на отмену всех ордеров
+2. Параллельно асинхронно запрашиваем позиции
+3. Записываем позиции
+4. Отправляем запрос на ордера в установленных парах
+5. Обработчиком обрабатываем ответы на запросы
+    5.1 При удачной транзакции в записях позиций добавляем свойство `Out`
+    5.2 При неудачной транзакции отменить ордер, затем разместить новый
+    
