@@ -20,20 +20,35 @@ balance = async (apiKey, secretKey, endpoint, path, parameters) => {
         console.log(error);
     }
 }
+
 getAssets = async () => {
     const getBalance = await balance(apiKey, secretKey, endpoint, path, parameters)
-    const element = {}
+    const assets = {}
+    let listOfAssets = []
     for (let index = 0; index < getBalance.userAssets.length; index++) {
         let line = getBalance.userAssets[index]
         if (line.free>0 || line.locked>0 ) {
             let assetName = line.asset
-            element[assetName] = parseFloat(line.free)+parseFloat(line.locked);
+            listOfAssets.push(assetName);
+            assets[assetName] = parseFloat(line.free)+parseFloat(line.locked);
             console.log(line);
         }
     }
-    console.log(element);
+    console.log(listOfAssets);
+    return assets
 }
 
 getAssets()
 
 
+getPrice = async (ticker) => {
+    let parameter = 'symbol=' + ticker + 'USDT'
+    try {
+        const bncPriceSnap = await bnc('', '', endpoint, '/api/v3/ticker/price', parameter)
+        console.log(bncPriceSnap);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+getPrice('BTC')
