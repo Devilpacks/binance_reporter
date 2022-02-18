@@ -15,7 +15,7 @@ const getRequest = async (apiKey, secretKey, endpoint, path, parameters) => {
     let snap
     if (apiKey==secretKey) {
         message = parameters
-        console.log(`${endpoint}${path}?${message}`);
+        console.log(`${endpoint}${path}?${message}`, new Date());
         const makeRequest = await fetch(`${endpoint}${path}?${message}`, options)
                 .then(checkResponseStatus)
                 .then(response => response.json())

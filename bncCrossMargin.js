@@ -9,6 +9,7 @@ const secretKey = process.env.bncSecret
 const endpoint = 'https://api3.binance.com'
 const path = '/sapi/v1/margin/account'
 const parameters = ''
+let listOfAssets = []
 
 balance = async (apiKey, secretKey, endpoint, path, parameters) => {
     try {
@@ -24,31 +25,60 @@ balance = async (apiKey, secretKey, endpoint, path, parameters) => {
 getAssets = async () => {
     const getBalance = await balance(apiKey, secretKey, endpoint, path, parameters)
     const assets = {}
-    let listOfAssets = []
     for (let index = 0; index < getBalance.userAssets.length; index++) {
         let line = getBalance.userAssets[index]
         if (line.free>0 || line.locked>0 ) {
             let assetName = line.asset
             listOfAssets.push(assetName);
-            assets[assetName] = parseFloat(line.free)+parseFloat(line.locked);
+            assets[assetName] = {quantity: parseFloat(line.netAsset)};
             console.log(line);
         }
     }
-    console.log(listOfAssets);
+    console.log(assets);
     return assets
 }
 
-getAssets()
+
 
 
 getPrice = async (ticker) => {
     let parameter = 'symbol=' + ticker + 'USDT'
+    if (ticker=='USDT' || ticker=='BUSD') {
+        return { symbol: ticker, price: '1' }
+    }
     try {
+        console.log(new Date(), ticker, 'begin');
         const bncPriceSnap = await bnc('', '', endpoint, '/api/v3/ticker/price', parameter)
-        console.log(bncPriceSnap);
+        console.log(new Date(), ticker, 'done');
+        return bncPriceSnap
     } catch (error) {
         console.log(error);
     }
 }
 
-getPrice('BTC')
+async function fiveParallel() {
+    const assetQnt = await getAssets();
+    console.log(assetQnt.MATIC.quantity);
+    const concurrencyLimit = 5;
+    // Enhance arguments array to have an index of the argument at hand
+    const argsCopy = [].concat(listOfAssets.map((val) => ({ val })));
+    console.log('argscopy: ',argsCopy);
+    const result = new Array(listOfAssets.length);
+    const promises = new Array(concurrencyLimit).fill(Promise.resolve());
+    // Recursively chain the next Promise to the currently executed Promise
+    function chainNext(p) {
+      if (argsCopy.length) {
+        const arg = argsCopy.shift();
+        return p.then(() => {
+          // Store the result into the array upon Promise completion
+          const operationPromise = getPrice(arg.val).then(r => { result[arg.val] = r; });
+          return chainNext(operationPromise);
+        });
+      }
+      return p;
+    }
+    await Promise.all(promises.map(chainNext));
+    return result;
+  }
+  
+  fiveParallel().then(res => console.log(res))
