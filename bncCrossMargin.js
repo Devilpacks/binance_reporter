@@ -1,7 +1,8 @@
 const dotenv = require('dotenv');
 const bnc = require('./getRequest')
 const postgres = require('postgres');
-const fs = require('fs')
+const fs = require('fs');
+const { time } = require('console');
 dotenv.config();
 
 const apiKey = process.env.bncKey;
@@ -31,10 +32,8 @@ getAssets = async () => {
             let assetName = line.asset
             listOfAssets.push(assetName);
             assets[assetName] = {quantity: parseFloat(line.netAsset)};
-            console.log(line);
         }
     }
-    console.log(assets);
     return assets
 }
 
@@ -68,13 +67,15 @@ async function fiveParallel() {
               result[arg.val] = r;
               result[arg.val].quantity = assetQnt[arg.val].quantity
               result[arg.val].netOfAsset = result[arg.val].quantity * result[arg.val].price
-            });
+          });
           return chainNext(operationPromise);
         });
       }
       return p;
     }
+    console.time('fiveParallel');
     await Promise.all(promises.map(chainNext));
+    console.timeEnd('fiveParallel');
     return result;
 }
   

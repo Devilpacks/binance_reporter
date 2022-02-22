@@ -15,7 +15,7 @@ const getRequest = async (apiKey, secretKey, endpoint, path, parameters) => {
     let snap
     if (apiKey==secretKey) {
         message = parameters
-        console.log(`${endpoint}${path}?${message}`, new Date());
+        // console.log(`${endpoint}${path}?${message}`, new Date());
         const makeRequest = await fetch(`${endpoint}${path}?${message}`, options)
                 .then(checkResponseStatus)
                 .then(response => response.json())
@@ -28,7 +28,7 @@ const getRequest = async (apiKey, secretKey, endpoint, path, parameters) => {
     let signature = crypto.createHmac('sha256', secretKey).update(parametersAndNonce).digest('hex');
     message = parametersAndNonce + '&signature=' + signature;
     options.headers['X-MBX-APIKEY'] = apiKey;
-    console.log(`${endpoint}${path}?${message}`);
+    // console.log(`${endpoint}${path}?${message}`);
     const makeRequest = await fetch(`${endpoint}${path}?${message}`, options)
                 .then(checkResponseStatus)
                 .then(response => response.json())
