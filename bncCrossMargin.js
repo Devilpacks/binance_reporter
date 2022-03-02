@@ -50,7 +50,7 @@ getPrice = async (ticker) => {
     }
 }
 
-async function fiveParallel() {
+const fiveParallel = async () => {
     console.time('fiveParallel');
     const assetQnt = await getAssets();
     const concurrencyLimit = 10;
@@ -80,4 +80,4 @@ async function fiveParallel() {
     return result;
 }
 
-fiveParallel().then(res => console.log(Object.keys(res)))
+fiveParallel().then(res => console.log(res))
